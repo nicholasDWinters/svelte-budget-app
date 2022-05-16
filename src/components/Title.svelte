@@ -7,8 +7,7 @@
   $: if (expenses) {
     total = 0;
     expenses.forEach(exp => {
-      
-      total += exp.amount;
+      total += exp?.amount;
     })
   }
 </script>

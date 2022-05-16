@@ -3,9 +3,28 @@
   import type { TypeExpense } from '../types';
 import { createEventDispatcher } from 'svelte';
 
+  export let current: TypeExpense;
   let name = '';
   let amount = 0;
   let id = Math.floor(Math.random() * 1000);
+  let addForm = true;
+  let btnPhrase = 'Add Expense';
+
+  $: current;
+  $: name;
+  $: amount;
+  $: id;
+  $: addForm;
+  $: btnPhrase;
+  if (current) {
+    console.log(current);
+    addForm = false;
+    name = current.name;
+    amount = current.amount;
+    id = current.id;
+    btnPhrase = 'Edit Expense';
+  }
+
   let dispatch = createEventDispatcher();
   let submitForm = () => {
     let expense: TypeExpense = { id, name, amount };
@@ -27,7 +46,7 @@ import { createEventDispatcher } from 'svelte';
     <p class="form-empty">
       Please fill out all form fields
     </p>
-    <button type="button" class="btn btn-block" on:click={submitForm}>add expense</button>
+    <button type="button" class="btn btn-block" on:click={submitForm}>{btnPhrase}</button>
     <button type="button" class="close-btn"><i class="fas fa-times"></i>close</button>
   </form>
 </section>

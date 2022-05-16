@@ -9,7 +9,7 @@
   <Title title="expense list" {expenses} />
   <ul>
     {#each expenses as expense, index}
-    <Expense {expense} on:remove />
+    <Expense {expense} on:remove on:edit />
     {:else}
     <h2>currently no expenses to show</h2>
     {/each}
