@@ -3,11 +3,18 @@
   import {slide} from 'svelte/transition';
   import type {TypeExpense} from '../types';
   export let expense: TypeExpense;
+  export let showForm: boolean | undefined;
+  export let toggleForm: Function | undefined;
 
   let displayAmount = false;
 
   const toggleDisplayAmount = () => displayAmount = !displayAmount;
   const dispatch = createEventDispatcher();
+
+  const dispatchEdit = () => {
+    toggleForm();
+    dispatch('edit', {expense});
+  }
 </script>
 
 <article class="single-expense">
@@ -20,7 +27,7 @@
     {/if}
   </div>
   <div class="expense-buttons">
-    <button class="expense-btn edit-btn" on:click={() => dispatch('edit', {expense})}>
+    <button class="expense-btn edit-btn" on:click={dispatchEdit}>
       <i class="fas fa-pen"></i>
     </button>
     <button on:click={() => dispatch('remove', {id: expense?.id})} class="expense-btn delete-btn">

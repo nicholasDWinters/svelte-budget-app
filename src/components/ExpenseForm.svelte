@@ -2,35 +2,51 @@
   import Title from './Title.svelte';
   import type { TypeExpense } from '../types';
 import { createEventDispatcher } from 'svelte';
-
+  export let toggleForm: Function | undefined;
+  export let showForm: boolean | undefined;
   export let current: TypeExpense;
   let name = '';
   let amount = 0;
   let id = Math.floor(Math.random() * 1000);
   let addForm = true;
-  let btnPhrase = 'Add Expense';
-
-  $: current;
-  $: name;
-  $: amount;
-  $: id;
   $: addForm;
-  $: btnPhrase;
-  if (current) {
-    console.log(current);
-    addForm = false;
-    name = current.name;
-    amount = current.amount;
-    id = current.id;
-    btnPhrase = 'Edit Expense';
-  }
+
+$: if (current && addForm) {
+   addForm = false;
+   name = current.name;
+   amount = current.amount;
+   id = current.id;
+ }
+  
+ let resetValues = () => {
+    name = '';
+    amount = 0;
+    id = Math.floor(Math.random() * 1000);
+ }
 
   let dispatch = createEventDispatcher();
   let submitForm = () => {
     let expense: TypeExpense = { id, name, amount };
-    dispatch('add', {expense: expense})
+    if (addForm) {
+      dispatch('add', {expense});
+      resetValues();
+
+    } else {
+      dispatch('update', {expense});
+      resetValues();
+      addForm = true;
+      toggleForm();
+    }
   }
+
+  let closeForm = () => {
+    resetValues();
+    addForm = true;
+    toggleForm();
+  }
+
 </script>
+
 
 <section class="form">
   <Title title="add expense" />
@@ -46,7 +62,7 @@ import { createEventDispatcher } from 'svelte';
     <p class="form-empty">
       Please fill out all form fields
     </p>
-    <button type="button" class="btn btn-block" on:click={submitForm}>{btnPhrase}</button>
-    <button type="button" class="close-btn"><i class="fas fa-times"></i>close</button>
+    <button type="button" class="btn btn-block" on:click={submitForm}>{addForm ? 'add expense' : 'edit expense'}</button>
+    <button on:click={closeForm} type="button" class="close-btn"><i class="fas fa-times"></i>close</button>
   </form>
 </section>
