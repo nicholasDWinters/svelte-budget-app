@@ -3,12 +3,12 @@
   import type { TypeExpense } from '../types';
 import { createEventDispatcher } from 'svelte';
   export let toggleForm: Function | undefined;
-  export let showForm: boolean | undefined;
   export let current: TypeExpense;
   let name = '';
   let amount = 0;
   let id = Math.floor(Math.random() * 1000);
   let addForm = true;
+  $: error = name.length === 0;
   $: addForm;
 
 $: if (current && addForm) {
@@ -26,17 +26,19 @@ $: if (current && addForm) {
 
   let dispatch = createEventDispatcher();
   let submitForm = () => {
-    let expense: TypeExpense = { id, name, amount };
-    if (addForm) {
-      dispatch('add', {expense});
-      resetValues();
-
-    } else {
-      dispatch('update', {expense});
-      resetValues();
-      addForm = true;
-      toggleForm();
-    }
+    
+      let expense: TypeExpense = { id, name, amount };
+      if (addForm) {
+        dispatch('add', {expense});
+        resetValues();
+  
+      } else {
+        dispatch('update', {expense});
+        resetValues();
+        addForm = true;
+        toggleForm();
+      }
+    
   }
 
   let closeForm = () => {
@@ -49,7 +51,7 @@ $: if (current && addForm) {
 
 
 <section class="form">
-  <Title title="add expense" />
+  <Title title={addForm ? 'add expense' : 'edit expense'} />
   <form class="expense-form">
     <div class="form-control">
       <label for="name">name</label>
@@ -57,12 +59,14 @@ $: if (current && addForm) {
     </div>
     <div class="form-control">
       <label for="amount">amount</label>
-      <input type="number" bind:value={amount} id="amount">
+      <input type="number" min="0" bind:value={amount} id="amount">
     </div>
+    {#if error}
     <p class="form-empty">
       Please fill out all form fields
     </p>
-    <button type="button" class="btn btn-block" on:click={submitForm}>{addForm ? 'add expense' : 'edit expense'}</button>
+    {/if}
+    <button type="button" class:disabled={error} disabled={error} class="btn btn-block" on:click={submitForm}>{addForm ? 'add expense' : 'edit expense'}</button>
     <button on:click={closeForm} type="button" class="close-btn"><i class="fas fa-times"></i>close</button>
   </form>
 </section>
