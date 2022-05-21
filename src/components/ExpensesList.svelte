@@ -21,6 +21,5 @@
 <style>
   h2 {
     text-transform: capitalize;
-    color: red;
   }
 </style>

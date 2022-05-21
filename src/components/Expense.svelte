@@ -3,7 +3,6 @@
   import {slide} from 'svelte/transition';
   import type {TypeExpense} from '../types';
   export let expense: TypeExpense;
-  export let showForm: boolean | undefined;
   export let toggleForm: Function | undefined;
 
   let displayAmount = false;

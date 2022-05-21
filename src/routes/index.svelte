@@ -3,11 +3,16 @@
   import ExpensesList from '../components/ExpensesList.svelte';
   // import expensesData from '../expenses';
   import ExpenseForm from '../components/ExpenseForm.svelte';
-  import {onMount} from 'svelte';
+  import Modal from '../components/Modal.svelte';
+  import {onMount, afterUpdate} from 'svelte';
   import type { TypeExpense } from '../types';
 
   onMount(() => {
     expenses = localStorage.getItem('expenses') ? JSON.parse(localStorage.getItem('expenses')) : [];
+  })
+
+  afterUpdate(() => {
+    setLocalStorage();
   })
 
   let showForm = false;
@@ -21,17 +26,14 @@
 
   let removeExpense = (event: CustomEvent) => {
     expenses = expenses.filter(item => item.id !== event.detail?.id);
-    setLocalStorage();
   }
 
   let clearExpenses = () => {
     expenses = [];
-    setLocalStorage();
   }
 
   let addExpense = (event: CustomEvent) => {
     expenses = [event.detail?.expense, ...expenses];
-    setLocalStorage();
   }
   let editExpense = (event: CustomEvent) => {
     let expense = event.detail?.expense;
@@ -43,7 +45,6 @@
     let index = expenses.findIndex(el => el.id === expense.id);
     expenses[index] = {id: expense.id, name: expense.name, amount: expense.amount};
     inProgress = undefined;
-    setLocalStorage();
   }
 
   let toggleForm = () => {showForm = !showForm}
@@ -53,7 +54,9 @@
 <Navbar {toggleForm} {showForm} />
 <main class="content">
   {#if showForm}
+  <Modal>
   <ExpenseForm on:add={addExpense} on:update={updateExpense} current={inProgress} {toggleForm} {showForm} />
+</Modal>
   {/if}
   <ExpensesList  {toggleForm} {showForm} {expenses} on:remove={removeExpense} on:edit={editExpense} />
   <button on:click={clearExpenses} type='button' class="btn btn-primary btn-block">clear expenses</button>

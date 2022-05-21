@@ -31,7 +31,7 @@ $: if (current && addForm) {
       if (addForm) {
         dispatch('add', {expense});
         resetValues();
-  
+        toggleForm();
       } else {
         dispatch('update', {expense});
         resetValues();
